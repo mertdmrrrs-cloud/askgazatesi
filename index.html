@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seni Sevmekten Vazgeçmem</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Cormorant Garamond', serif;
+            background: #000000;
+            color: #ffffff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
+            z-index: 1;
+        }
+
+        .stars-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .nebula {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(25, 25, 112, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(72, 61, 139, 0.1) 0%, transparent 60%);
+            animation: nebulaShift 20s ease-in-out infinite;
+        }
+
+        @keyframes nebulaShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Start Screen */
+        .start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #000000;
+            z-index: 1000;
+            transition: opacity 2s ease-out;
+        }
+
+        .start-screen.fadeout {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .title-container {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 4em;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: titleGlow 3s ease-in-out infinite;
+            letter-spacing: 3px;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+            }
+            50% { 
+                filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1));
+            }
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            letter-spacing: 2px;
+        }
+
+        .start-button {
+            padding: 25px 80px;
+            font-size: 1.5em;
+            font-family: 'Cinzel', serif;
+            color: #000;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 50px rgba(255, 215, 0, 0.4);
+            font-weight: 600;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .start-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .start-button:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.6);
+        }
+
+        /* Main Content */
+        .main-content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .poem-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 40px;
+            margin-bottom: 150px;
+        }
+
+        .current-verse {
+            text-align: center;
+            font-size: 3.5em;
+            line-height: 1.8;
+            color: #ffffff;
+            font-weight: 400;
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .current-verse.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .current-verse.golden {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 500;
+            font-style: italic;
+            font-size: 3.8em;
+            text-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
+        }
+
+        /* Lyrics Bottom */
+        .lyrics-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, 
+                rgba(0, 0, 0, 0.98) 0%, 
+                rgba(0, 0, 0, 0.95) 50%, 
+                rgba(0, 0, 0, 0.7) 80%, 
+                transparent 100%);
+            padding: 50px 30px 40px;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .lyrics-title {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.8em;
+            color: #ffd700;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .lyrics-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .lyrics-track {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .lyric-line {
+            font-size: 1.4em;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            padding: 8px 20px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .lyric-line.active {
+            color: #ffd700;
+            font-size: 1.7em;
+            font-weight: 500;
+            transform: scale(1.1);
+            background: rgba(255, 215, 0, 0.05);
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .lyric-line.passed {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 200;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+
+        /* Audio Control */
+        .audio-control {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            z-index: 200;
+        }
+
+        .volume-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.15);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            color: #ffd700;
+            font-size: 1.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .volume-btn:hover {
+            background: rgba(255, 215, 0, 0.3);
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5em;
+            }
+
+            .subtitle {
+                font-size: 1.2em;
+            }
+
+            .start-button {
+                padding: 20px 50px;
+                font-size: 1.2em;
+            }
+
+            .current-verse {
+                font-size: 2em;
+                padding: 0 20px;
+                min-height: 120px;
+            }
+
+            .current-verse.golden {
+                font-size: 2.2em;
+            }
+
+            .lyric-line {
+                font-size: 1.1em;
+            }
+
+            .lyric-line.active {
+                font-size: 1.3em;
+            }
+
+            .lyrics-bottom {
+                padding: 40px 20px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 1.8em;
+                letter-spacing: 1px;
+            }
+
+            .current-verse {
+                font-size: 1.6em;
+            }
+
+            .current-verse.golden {
+                font-size: 1.8em;
+            }
+
+            .audio-control {
+                top: 20px;
+                right: 20px;
+            }
+
+            .volume-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="stars-layer" id="starsLayer"></div>
+    <div class="nebula"></div>
+
+    <div class="start-screen" id="startScreen">
+        <div class="title-container">
+            <h1 class="main-title">Seni Sevmekten Vazgeçmem</h1>
+            <p class="subtitle">Bir Aşk Şiiri</p>
+        </div>
+        <button class="start-button" id="startBtn">
+            <span style="position: relative; z-index: 1;">Başlat</span>
+        </button>
+    </div>
+
+    <div class="main-content">
+        <div class="poem-container">
+            <div class="current-verse" id="currentVerse"></div>
+        </div>
+
+        <div class="lyrics-bottom">
+            <div class="lyrics-wrapper">
+                <h2 class="lyrics-title">Seni Sevmekten Vazgeçmem</h2>
+                <div class="lyrics-track" id="lyricsTrack"></div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div class="audio-control">
+        <button class="volume-btn" id="volumeBtn" title="Ses: Açık">♪</button>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_4f87ba2cc6.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const verses = [
+            "Bir kış günü çöllerde nilüferler açarsa",
+            "Denizde kuşlar yüzer, gökte balık uçarsa",
+            "Menekşelerin boyu sarmaşığı aşarsa",
+            "Kutuplar toprak olur, susuz kalır, çatlar",
+            "Okyanuslar kurur da Sahra'yı sel basarsa",
+            "Güneş batıdan doğar, doğudan da batarsa",
+            "Belki o zaman seni sevmekten vazgeçerim…"
+        ];
+
+        const startScreen = document.getElementById('startScreen');
+        const startBtn = document.getElementById('startBtn');
+        const currentVerse = document.getElementById('currentVerse');
+        const lyricsTrack = document.getElementById('lyricsTrack');
+        const bgMusic = document.getElementById('bgMusic');
+        const volumeBtn = document.getElementById('volumeBtn');
+        const progressBar = document.getElementById('progressBar');
+
+        let currentIndex = 0;
+        let animationInterval;
+        let isMuted = false;
+
+        // Create stars
+        function createStars() {
+            const starsLayer = document.getElementById('starsLayer');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (2 + Math.random() * 3) + 's';
+                starsLayer.appendChild(star);
+            }
+        }
+
+        // Initialize lyrics
+        function initLyrics() {
+            lyricsTrack.innerHTML = '';
+            verses.forEach((verse, index) => {
+                const line = document.createElement('div');
+                line.className = 'lyric-line';
+                line.textContent = verse;
+                line.dataset.index = index;
+                lyricsTrack.appendChild(line);
+            });
+        }
+
+        // Show verse
+        function showVerse(index) {
+            if (index >= verses.length) {
+                currentIndex = 0;
+                setTimeout(() => showVerse(0), 2000);
+                return;
+            }
+
+            currentVerse.classList.remove('show', 'golden');
+            
+            setTimeout(() => {
+                currentVerse.textContent = verses[index];
+                currentVerse.classList.add('show');
+                
+                if (index === verses.length - 1) {
+                    currentVerse.classList.add('golden');
+                }
+
+                // Update lyrics
+                const allLines = document.querySelectorAll('.lyric-line');
+                allLines.forEach((line, i) => {
+                    line.classList.remove('active', 'passed');
+                    if (i < index) {
+                        line.classList.add('passed');
+                    } else if (i === index) {
+                        line.classList.add('active');
+                    }
+                });
+
+                // Update progress
+                const progress = ((index + 1) / verses.length) * 100;
+                progressBar.style.width = progress + '%';
+            }, 200);
+        }
+
+        // Start animation
+        function startAnimation() {
+            showVerse(0);
+            animationInterval = setInterval(() => {
+                currentIndex++;
+                if (currentIndex >= verses.length) {
+                    currentIndex = 0;
+                }
+                showVerse(currentIndex);
+            }, 5000);
+        }
+
+        // Start button
+        startBtn.addEventListener('click', () => {
+            startScreen.classList.add('fadeout');
+            bgMusic.play().catch(e => console.log('Audio play failed:', e));
+            
+            setTimeout(() => {
+                startScreen.style.display = 'none';
+                initLyrics();
+                startAnimation();
+            }, 2000);
+        });
+
+        // Volume control
+        volumeBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            bgMusic.muted = isMuted;
+            volumeBtn.textContent = isMuted ? '♪̸' : '♪';
+            volumeBtn.title = isMuted ? 'Ses: Kapalı' : 'Ses: Açık';
+        });
+
+        createStars();
+    </script>
+</body>
+</html>
