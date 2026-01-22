@@ -411,7 +411,7 @@
     <div class="start-screen" id="startScreen">
         <div class="title-container">
             <h1 class="main-title">Seni Sevmekten Vazgeçmem</h1>
-            <p class="subtitle">Azram'a</p>
+            <p class="subtitle">Azra'ma</p>
         </div>
         <button class="start-button" id="startBtn">
             <span style="position: relative; z-index: 1;">Başlat</span>
@@ -445,13 +445,13 @@
 
     <script>
         const verses = [
-            "Bir kış günü çöllerde nilüferler açarsa",
-            "Denizde kuşlar yüzer, gökte balık uçarsa",
-            "Menekşelerin boyu sarmaşığı aşarsa",
-            "Kutuplar toprak olur, susuz kalır, çatlar",
-            "Okyanuslar kurur da Sahra'yı sel basarsa",
-            "Güneş batıdan doğar, doğudan da batarsa",
-            "Belki o zaman seni sevmekten vazgeçerim…"
+            { text: "Bir kış günü çöllerde nilüferler açarsa", time: 0 },
+            { text: "Denizde kuşlar yüzer, gökte balık uçarsa", time: 2 },
+            { text: "Menekşelerin boyu sarmaşığı aşarsa", time: 4 },
+            { text: "Kutuplar toprak olur, susuz kalır, çatlar", time: 6 },
+            { text: "Okyanuslar kurur da Sahra'yı sel basarsa", time: 8 },
+            { text: "Güneş batıdan doğar, doğudan da batarsa", time: 10 },
+            { text: "Belki o zaman seni sevmekten vazgeçerim…", time: 12 }
         ];
 
         const startScreen = document.getElementById('startScreen');
@@ -489,7 +489,7 @@
             verses.forEach((verse, index) => {
                 const line = document.createElement('div');
                 line.className = 'lyric-line';
-                line.textContent = verse;
+                line.textContent = verse.text;
                 line.dataset.index = index;
                 lyricsTrack.appendChild(line);
             });
@@ -506,7 +506,7 @@
             currentVerse.classList.remove('show', 'golden');
             
             setTimeout(() => {
-                currentVerse.textContent = verses[index];
+                currentVerse.textContent = verses[index].text;
                 currentVerse.classList.add('show');
                 
                 if (index === verses.length - 1) {
@@ -541,6 +541,22 @@
                 showVerse(currentIndex);
             }, 5000);
         }
+
+        // Sync with music
+        bgMusic.addEventListener('timeupdate', () => {
+            const duration = bgMusic.duration;
+            const currentTime = bgMusic.currentTime;
+            
+            if (duration && !isNaN(duration)) {
+                const verseIndex = Math.floor((currentTime / duration) * verses.length);
+                
+                if (verseIndex !== currentIndex && verseIndex < verses.length) {
+                    clearInterval(animationInterval);
+                    currentIndex = verseIndex;
+                    showVerse(currentIndex);
+                }
+            }
+        });
 
         // Start button
         startBtn.addEventListener('click', () => {
