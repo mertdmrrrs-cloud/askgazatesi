@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seni Sevmekten Vazgeçmem</title>
+    <title>Canımdın Benim</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -410,8 +410,8 @@
 
     <div class="start-screen" id="startScreen">
         <div class="title-container">
-            <h1 class="main-title">Seni Sevmekten Vazgeçmem</h1>
-            <p class="subtitle">Azra'ma</p>
+            <h1 class="main-title">Canımdın Benim</h1>
+            <p class="subtitle">Bir Aşk Şiiri</p>
         </div>
         <button class="start-button" id="startBtn">
             <span style="position: relative; z-index: 1;">Başlat</span>
@@ -425,7 +425,7 @@
 
         <div class="lyrics-bottom">
             <div class="lyrics-wrapper">
-                <h2 class="lyrics-title">Seni Sevmekten Vazgeçmem</h2>
+                <h2 class="lyrics-title">Canımdın Benim</h2>
                 <div class="lyrics-track" id="lyricsTrack"></div>
             </div>
         </div>
@@ -445,13 +445,14 @@
 
     <script>
         const verses = [
-            { text: "Bir kış günü çöllerde nilüferler açarsa", time: 0 },
-            { text: "Denizde kuşlar yüzer, gökte balık uçarsa", time: 2 },
-            { text: "Menekşelerin boyu sarmaşığı aşarsa", time: 4 },
-            { text: "Kutuplar toprak olur, susuz kalır, çatlar", time: 6 },
-            { text: "Okyanuslar kurur da Sahra'yı sel basarsa", time: 8 },
-            { text: "Güneş batıdan doğar, doğudan da batarsa", time: 10 },
-            { text: "Belki o zaman seni sevmekten vazgeçerim…", time: 12 }
+            { text: "Seninle her günüm ömre bedeldi", time: 0 },
+            { text: "Gönül dediğimde bağımdın benim", time: 2 },
+            { text: "Unutmak mümkün mü liselim seni", time: 4 },
+            { text: "Hayatım varlığım canımdın benim", time: 6 },
+            { text: "Seninle her günüm ömre bedeldi", time: 8 },
+            { text: "Gönül dediğimde bağımdın benim", time: 10 },
+            { text: "Unutmak mümkün mü liselim seni", time: 12 },
+            { text: "Hayatım, varlığım, canımdın benim", time: 14 }
         ];
 
         const startScreen = document.getElementById('startScreen');
@@ -544,18 +545,23 @@
 
         // Sync with music
         bgMusic.addEventListener('timeupdate', () => {
-            const duration = bgMusic.duration;
             const currentTime = bgMusic.currentTime;
             
-            if (duration && !isNaN(duration)) {
-                const verseIndex = Math.floor((currentTime / duration) * verses.length);
-                
-                if (verseIndex !== currentIndex && verseIndex < verses.length) {
-                    clearInterval(animationInterval);
-                    currentIndex = verseIndex;
-                    showVerse(currentIndex);
+            for (let i = verses.length - 1; i >= 0; i--) {
+                if (currentTime >= verses[i].time) {
+                    if (currentIndex !== i) {
+                        currentIndex = i;
+                        showVerse(currentIndex);
+                    }
+                    break;
                 }
             }
+        });
+
+        // Reset when music ends
+        bgMusic.addEventListener('ended', () => {
+            currentIndex = 0;
+            showVerse(0);
         });
 
         // Start button
