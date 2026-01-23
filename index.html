@@ -11,121 +11,39 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-    background:#000;color:#fff;
-    font-family:'Cormorant Garamond',serif;
-    overflow:hidden;
-}
+body{background:#000;color:#fff;font-family:'Cormorant Garamond',serif;overflow:hidden}
 
 .background{position:fixed;inset:0;background:radial-gradient(#0a0a0a,#000);z-index:1}
 .stars-layer{position:fixed;inset:0;z-index:2}
 .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle 3s infinite}
 @keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
 
-.start-screen{
-    position:fixed;inset:0;
-    background:#000;z-index:1000;
-    display:flex;flex-direction:column;
-    justify-content:center;align-items:center;
-    transition:opacity 2s
-}
+.start-screen{position:fixed;inset:0;background:#000;z-index:1000;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity 2s}
 .start-screen.fadeout{opacity:0;pointer-events:none}
 
-.main-title{
-    font-family:'Cinzel',serif;
-    font-size:4em;
-    background:linear-gradient(135deg,#ffd700,#ffed4e);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
+.main-title{font-family:'Cinzel',serif;font-size:4em;background:linear-gradient(135deg,#ffd700,#ffed4e);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-.subtitle{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    opacity:.8;
-    margin-bottom:60px;
-}
+.subtitle{display:flex;align-items:center;gap:14px;opacity:.8;margin-bottom:60px}
 
-/* 🤍 KALP ANİMASYONU */
-.heart{
-    width:26px;
-    height:26px;
-}
-.heart path{
-    fill:none;
-    stroke:white;
-    stroke-width:2.5;
-    stroke-dasharray:150;
-    stroke-dashoffset:150;
-    animation:drawHeart 3s ease forwards, pulse 1.5s ease-in-out infinite 3s;
-}
+.heart{width:26px;height:26px}
+.heart path{fill:none;stroke:white;stroke-width:2.5;stroke-dasharray:150;stroke-dashoffset:150;animation:drawHeart 3s ease forwards, pulse 1.5s ease-in-out infinite 3s}
+@keyframes drawHeart{to{stroke-dashoffset:0}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
-@keyframes drawHeart{
-    to{stroke-dashoffset:0}
-}
-@keyframes pulse{
-    0%,100%{transform:scale(1)}
-    50%{transform:scale(1.15)}
-}
+.start-button{padding:25px 80px;border:none;border-radius:60px;background:linear-gradient(135deg,#ffd700,#ffed4e);font-family:'Cinzel',serif;font-size:1.4em;cursor:pointer}
 
-.start-button{
-    padding:25px 80px;
-    border:none;border-radius:60px;
-    background:linear-gradient(135deg,#ffd700,#ffed4e);
-    font-family:'Cinzel',serif;
-    font-size:1.4em;cursor:pointer
-}
+.main-content{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
 
-.main-content{
-    position:fixed;inset:0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    z-index:10
-}
-
-.current-verse{
-    font-size:3.2em;
-    text-align:center;
-    opacity:0;
-    transform:translateY(40px);
-    transition:1s;
-    min-height:140px
-}
+.current-verse{font-size:3.2em;text-align:center;opacity:0;transform:translateY(40px);transition:1s;min-height:140px}
 .current-verse.show{opacity:1;transform:translateY(0)}
-.current-verse.golden{
-    background:linear-gradient(135deg,#ffd700,#ffed4e);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    font-style:italic
-}
+.current-verse.golden{background:linear-gradient(135deg,#ffd700,#ffed4e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:italic}
 
-.lyrics-bottom{
-    position:fixed;
-    bottom:0;
-    width:100%;
-    padding:40px 20px;
-    background:linear-gradient(to top,rgba(0,0,0,.95),transparent);
-    z-index:100;
-    text-align:center;
-}
+.lyrics-bottom{position:fixed;bottom:0;width:100%;padding:40px 20px;background:linear-gradient(to top,rgba(0,0,0,.95),transparent);z-index:100;text-align:center}
 .lyric-line{opacity:.3;transition:.4s}
 .lyric-line.active{opacity:1;color:#ffd700;font-size:1.4em}
 
-.progress-container{
-    position:fixed;bottom:10px;
-    width:80%;height:4px;
-    background:rgba(255,255,255,.1);
-    border-radius:10px;overflow:hidden;
-    z-index:200
-}
-.progress-bar{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,#ffd700,#ffed4e)
-}
+.progress-container{position:fixed;bottom:10px;width:80%;height:4px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden;z-index:200}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#ffd700,#ffed4e)}
 </style>
 </head>
 
@@ -139,7 +57,6 @@ body{
 
     <div class="subtitle">
         <span>Azra’m</span>
-        <!-- 🤍 SVG KALP -->
         <svg class="heart" viewBox="0 0 24 24">
             <path d="M12 21s-7-4.35-9.5-8.28C-0.6 8.35 3.4 3.5 7.5 6.5 9.3 7.9 12 11 12 11s2.7-3.1 4.5-4.5c4.1-3 8.1 1.85 5 6.22C19 16.65 12 21 12 21z"/>
         </svg>
@@ -162,15 +79,19 @@ body{
 </audio>
 
 <script>
-/* ⏱️ TIME'A GÖRE OTOMATİK SIRALAMA */
+/* 📝 ŞARKI SÖZLERİ TIME’A GÖRE SIRALANDI */
 let verses = [
- {text:"Seninle her günüm ömre bedeldi", time:12},
- {text:"Gönül dediğimde bağımdın benim", time:5},
- {text:"Unutmak mümkün mü liselim seni", time:18},
- {text:"Hayatım varlığım canımdın benim", time:10},
- {text:"Hayatım, varlığım, canımdın benim", time:22}
+    {text:"Gönül dediğimde bağımdın benim", time:5},
+    {text:"Hayatım varlığım canımdın benim", time:10},
+    {text:"Seninle her günüm ömre bedeldi", time:12},
+    {text:"Unutmak mümkün mü liselim seni", time:18},
+    {text:"Seninle her günüm ömre bedeldi", time:25},
+    {text:"Gönül dediğimde bağımdın benim", time:30},
+    {text:"Unutmak mümkün mü liselim seni", time:35},
+    {text:"Hayatım, varlığım, canımdın benim", time:40}
 ];
 
+/* 🔹 ZAMAN SIRASINA GÖRE OTOMATİK SIRALA */
 verses.sort((a,b)=>a.time-b.time);
 
 const bgMusic=document.getElementById("bgMusic");
@@ -182,6 +103,7 @@ const progressBar=document.getElementById("progressBar");
 
 let index=-1;
 
+/* 📝 Lyrics DOM */
 lyricsTrack.innerHTML="";
 verses.forEach(v=>{
     const d=document.createElement("div");
@@ -190,6 +112,7 @@ verses.forEach(v=>{
     lyricsTrack.appendChild(d);
 });
 
+/* 🟡 SÖZ GÖSTERME FONKSİYONU */
 function showVerse(i){
     currentVerse.classList.remove("show","golden");
     setTimeout(()=>{
@@ -202,6 +125,7 @@ function showVerse(i){
     },150);
 }
 
+/* 🔹 MUSIC TIMEUPDATE */
 bgMusic.addEventListener("timeupdate",()=>{
     const t=bgMusic.currentTime;
     for(let i=verses.length-1;i>=0;i--){
@@ -215,17 +139,20 @@ bgMusic.addEventListener("timeupdate",()=>{
     }
 });
 
+/* 🔁 SONG LOOP */
 bgMusic.addEventListener("ended",()=>{
     bgMusic.currentTime=0;
     bgMusic.play();
 });
 
+/* 🔹 START BUTTON */
 startBtn.onclick=async()=>{
     startScreen.classList.add("fadeout");
     await bgMusic.play();
     setTimeout(()=>startScreen.style.display="none",2000);
 };
 
+/* 🌟 STARS ANIMATION */
 function createStars(){
     const layer=document.getElementById("starsLayer");
     for(let i=0;i<100;i++){
