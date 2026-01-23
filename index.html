@@ -133,14 +133,14 @@ body{
 
 <script>
 const verses = [
- {text:"Seninle her günüm ömre bedeldi",time:50000},
- {text:"Gönül dediğimde bağımdın benim",time:10000},
- {text:"Unutmak mümkün mü liselim seni",time:15000},
- {text:"Hayatım varlığım canımdın benim",time:20000},
- {text:"Seninle her günüm ömre bedeldi",time:250000},
- {text:"Gönül dediğimde bağımdın benim",time:300000},
- {text:"Unutmak mümkün mü liselim seni",time:350000},
- {text:"Hayatım, varlığım, canımdın benim",time:40000}
+ "Seninle her günüm ömre bedeldi",
+ "Gönül dediğimde bağımdın benim",
+ "Unutmak mümkün mü liselim seni",
+ "Hayatım varlığım canımdın benim",
+ "Seninle her günüm ömre bedeldi",
+ "Gönül dediğimde bağımdın benim",
+ "Unutmak mümkün mü liselim seni",
+ "Hayatım, varlığım, canımdın benim"
 ];
 
 const bgMusic = document.getElementById("bgMusic");
@@ -151,59 +151,103 @@ const lyricsTrack = document.getElementById("lyricsTrack");
 const progressBar = document.getElementById("progressBar");
 const volumeBtn = document.getElementById("volumeBtn");
 
-let timeouts=[];
-let muted=false;
+let muted = false;
+let index = 0;
+let lastSwitch = 0;
 
+// alt lyricleri oluştur
+lyricsTrack.innerHTML = "";
 verses.forEach(v=>{
     const d=document.createElement("div");
     d.className="lyric-line";
-    d.textContent=v.text;
+    d.textContent=v;
     lyricsTrack.appendChild(d);
 });
 
-function scheduleLyrics(){
-    document.querySelectorAll(".lyric-line").forEach(l=>l.classList.remove("active"));
-    verses.forEach((v,i)=>{
-        timeouts.push(setTimeout(()=>{
-            currentVerse.classList.remove("show","golden");
-            setTimeout(()=>{
-                currentVerse.textContent=v.text;
-                currentVerse.classList.add("show");
-                if(i===verses.length-1)currentVerse.classList.add("golden");
-                document.querySelectorAll(".lyric-line").forEach((l,idx)=>{
-                    l.classList.toggle("active",idx===i);
-                });
-            },200);
-        },v.time));
-    });
+function showVerse(i){
+    currentVerse.classList.remove("show","golden");
+    setTimeout(()=>{
+        currentVerse.textContent = verses[i];
+        currentVerse.classList.add("show");
+        if(i === verses.length-1) currentVerse.classList.add("golden");
+
+        document.querySelectorAll(".lyric-line").forEach((l,idx)=>{
+            l.classList.toggle("active", idx === i);
+        });
+    },150);
 }
 
+/* 🎧 AUDIO ANALYSIS */
+let audioCtx, analyser, dataArray;
+
+function setupAudioAnalysis(){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaElementSource(bgMusic);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 1024;
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+
+    analyze();
+}
+
+function analyze(){
+    analyser.getByteTimeDomainData(dataArray);
+
+    let sum = 0;
+    for(let i=0;i<dataArray.length;i++){
+        let v = (dataArray[i]-128)/128;
+        sum += v*v;
+    }
+    let rms = Math.sqrt(sum/dataArray.length);
+    let now = performance.now();
+
+    // 🔥 SES VURGUSU ALGILAMA
+    if(rms > 0.23 && now - lastSwitch > 800){
+        index++;
+        if(index >= verses.length) index = verses.length-1;
+        showVerse(index);
+        lastSwitch = now;
+    }
+
+    requestAnimationFrame(analyze);
+}
+
+/* 🎚️ PROGRESS BAR */
 bgMusic.addEventListener("timeupdate",()=>{
     if(bgMusic.duration){
-        progressBar.style.width=(bgMusic.currentTime/bgMusic.duration)*100+"%";
+        progressBar.style.width = 
+            (bgMusic.currentTime/bgMusic.duration)*100 + "%";
     }
 });
 
+/* 🔁 LOOP */
 bgMusic.addEventListener("ended",()=>{
-    timeouts.forEach(t=>clearTimeout(t));
-    bgMusic.currentTime=0;
+    index = 0;
+    showVerse(0);
+    bgMusic.currentTime = 0;
     bgMusic.play();
-    scheduleLyrics();
 });
 
-startBtn.addEventListener("click",async()=>{
+/* ▶ START */
+startBtn.addEventListener("click", async ()=>{
     startScreen.classList.add("fadeout");
     await bgMusic.play();
-    scheduleLyrics();
+    setupAudioAnalysis();
+    showVerse(0);
     setTimeout(()=>startScreen.style.display="none",2000);
 });
 
-volumeBtn.onclick=()=>{
-    muted=!muted;
-    bgMusic.muted=muted;
-    volumeBtn.textContent=muted?"♪̸":"♪";
+/* 🔊 VOLUME */
+volumeBtn.onclick = ()=>{
+    muted = !muted;
+    bgMusic.muted = muted;
+    volumeBtn.textContent = muted ? "♪̸" : "♪";
 };
 
+/* ✨ STARS */
 function createStars(){
     const layer=document.getElementById("starsLayer");
     for(let i=0;i<100;i++){
@@ -218,6 +262,7 @@ function createStars(){
 }
 createStars();
 </script>
+
 
 </body>
 </html>
